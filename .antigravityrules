@@ -53,9 +53,8 @@ When creating or updating nodes that require authentication, strictly use the pr
   - Rule: Use native `n8n-nodes-base.telegram` node with `Telegram Bot API` credential.
 
 - **Apify**:
-  - Type: `apifyApi` (or MCP OAuth2)
-  - Name: `Apify API`
-  - Rule: If using predefined OAuth2 in HTTP Request node, set `authentication` to `"predefinedCredentialType"` (not `"predefined"`).
+  - Type: None (Direct Bearer Header Auth)
+  - Rule: Uses HTTP Request Node with custom header parameters. Must set `authentication` to `"none"`, enable `sendHeaders: true`, and add an `"Authorization"` header with the value `"Bearer <Token>"` sourced from `process.env.APIFY_API_KEY` (avoiding credential manager binding due to sync bugs).
 
 - **Apiframe**:
   - Type: None (Direct Header Auth)

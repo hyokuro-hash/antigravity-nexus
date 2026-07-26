@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.3] - 2026-07-27
+
+### Added
+- `.env` 및 `.env.example`에 `APIFY_API_KEY` 환경 변수 추가
+
+### Changed
+- Apify 연동 테스트 방식을 n8n 크레덴셜 바인딩 대신 직접 헤더 전송(Authentication: none, Authorization: Bearer <Token> 헤더 기입)으로 전환
+- `.antigravityrules`에 Apify 연동 시 Bearer 토큰 헤더 직접 명시 및 환경 변수 참조 규칙 업데이트 적용
+
 ## [0.7.2] - 2026-07-27
 
 ### Added

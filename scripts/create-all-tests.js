@@ -117,9 +117,11 @@ async function createWorkflow() {
       {
         parameters: {
           method: "GET",
-          authentication: "predefinedCredentialType",
-          nodeCredentialType: "apifyMcpOAuth2Api",
+          authentication: "none",
           url: "https://api.apify.com/v2/users/me",
+          sendHeaders: true,
+          specifyHeaders: "json",
+          jsonHeaders: `{\n  "Authorization": "Bearer ${process.env.APIFY_API_KEY || ''}"\n}`,
           options: {}
         },
         id: "apify-test",
@@ -127,12 +129,6 @@ async function createWorkflow() {
         type: "n8n-nodes-base.httpRequest",
         typeVersion: 4.1,
         position: [400, 500],
-        credentials: {
-          apifyMcpOAuth2Api: {
-            id: "FlBDROVF9oci7HFP",
-            name: "Apify API"
-          }
-        },
         onError: "continue"
       }
     ],
