@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.4] - 2026-07-27
+
+### Added
+- Google Sheets 연동 테스트 노드(`Google Sheets Test`) 추가 및 통합 검증 워크플로우 동기화 완료
+  - 구글 시트 문서(`1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0`)와 연동하여 첫 번째 시트의 모든 행 데이터를 조회하는 동작 검증 지원
+
 ## [0.7.3] - 2026-07-27
 
 ### Added

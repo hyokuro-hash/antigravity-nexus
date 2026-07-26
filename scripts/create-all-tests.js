@@ -130,6 +130,34 @@ async function createWorkflow() {
         typeVersion: 4.1,
         position: [400, 500],
         onError: "continue"
+      },
+      {
+        parameters: {
+          operation: "getAll",
+          documentId: {
+            __rl: true,
+            value: "1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0",
+            mode: "id"
+          },
+          sheetName: {
+            __rl: true,
+            value: "gid://1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/0",
+            mode: "id"
+          },
+          options: {}
+        },
+        id: "google-sheets-test",
+        name: "Google Sheets Test",
+        type: "n8n-nodes-base.googleSheets",
+        typeVersion: 4,
+        position: [400, 600],
+        credentials: {
+          googleSheetsOAuth2Api: {
+            id: "kYYPtfXi2R21Raso",
+            name: "Google Sheets account"
+          }
+        },
+        onError: "continue"
       }
     ],
     connections: {
@@ -140,7 +168,8 @@ async function createWorkflow() {
             { node: "Google Gemini Test", type: "main", index: 0 },
             { node: "Tavily API Test", type: "main", index: 0 },
             { node: "Apiframe API Test", type: "main", index: 0 },
-            { node: "Apify API Test", type: "main", index: 0 }
+            { node: "Apify API Test", type: "main", index: 0 },
+            { node: "Google Sheets Test", type: "main", index: 0 }
           ]
         ]
       },

@@ -40,6 +40,11 @@ When creating or updating nodes that require authentication, strictly use the pr
   - Type: `googleDriveOAuth2Api`
   - Name: `Google Drive API`
   - Rule: Must use native `n8n-nodes-base.googleDrive` node. Do NOT use standard HTTP Request node for Google Drive API.
+
+- **Google Sheets**:
+  - Type: `googleSheetsOAuth2Api`
+  - Name: `Google Sheets account`
+  - Rule: Must use native `n8n-nodes-base.googleSheets` node with `Google Sheets account` credential for all sheet operations (append, update, getAll).
   
 - **Google Gemini**:
   - Type: `googlePalmApi` (or Google Gemini API)
