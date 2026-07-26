@@ -136,8 +136,8 @@ async function createWorkflow() {
           operation: "getAll",
           documentId: {
             __rl: true,
-            value: "1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0",
-            mode: "id"
+            value: "https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0",
+            mode: "url"
           },
           sheetName: {
             __rl: true,
@@ -146,11 +146,88 @@ async function createWorkflow() {
           },
           options: {}
         },
-        id: "google-sheets-test",
-        name: "Google Sheets Test",
+        id: "google-sheets-read-test",
+        name: "Google Sheets - Read Test",
         type: "n8n-nodes-base.googleSheets",
         typeVersion: 4,
         position: [400, 600],
+        credentials: {
+          googleSheetsOAuth2Api: {
+            id: "kYYPtfXi2R21Raso",
+            name: "Google Sheets account"
+          }
+        },
+        onError: "continue"
+      },
+      {
+        parameters: {
+          operation: "append",
+          documentId: {
+            __rl: true,
+            value: "https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0",
+            mode: "url"
+          },
+          sheetName: {
+            __rl: true,
+            value: "gid://1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/0",
+            mode: "id"
+          },
+          columns: {
+            mappingMode: "defineBelow",
+            value: {
+              ID: "CNT_TEST_APPEND_01",
+              Status: "1차대기",
+              Trigger_Type: "Manual",
+              Topic_Raw: "n8n Google Sheets Append Test"
+            },
+            schema: []
+          },
+          options: {}
+        },
+        id: "google-sheets-append-test",
+        name: "Google Sheets - Append Test",
+        type: "n8n-nodes-base.googleSheets",
+        typeVersion: 4,
+        position: [600, 600],
+        credentials: {
+          googleSheetsOAuth2Api: {
+            id: "kYYPtfXi2R21Raso",
+            name: "Google Sheets account"
+          }
+        },
+        onError: "continue"
+      },
+      {
+        parameters: {
+          operation: "update",
+          documentId: {
+            __rl: true,
+            value: "https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0",
+            mode: "url"
+          },
+          sheetName: {
+            __rl: true,
+            value: "gid://1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/0",
+            mode: "id"
+          },
+          columns: {
+            mappingMode: "defineBelow",
+            value: {
+              ID: "CNT_TEST_APPEND_01",
+              Status: "1차승인"
+            },
+            matchingColumns: [
+              "ID"
+            ],
+            schema: []
+          },
+          options: {}
+        },
+        id: "google-sheets-update-test",
+        name: "Google Sheets - Update Test",
+        type: "n8n-nodes-base.googleSheets",
+        typeVersion: 4,
+        position: [800, 600],
         credentials: {
           googleSheetsOAuth2Api: {
             id: "kYYPtfXi2R21Raso",
@@ -169,7 +246,21 @@ async function createWorkflow() {
             { node: "Tavily API Test", type: "main", index: 0 },
             { node: "Apiframe API Test", type: "main", index: 0 },
             { node: "Apify API Test", type: "main", index: 0 },
-            { node: "Google Sheets Test", type: "main", index: 0 }
+            { node: "Google Sheets - Read Test", type: "main", index: 0 }
+          ]
+        ]
+      },
+      "Google Sheets - Read Test": {
+        "main": [
+          [
+            { node: "Google Sheets - Append Test", type: "main", index: 0 }
+          ]
+        ]
+      },
+      "Google Sheets - Append Test": {
+        "main": [
+          [
+            { node: "Google Sheets - Update Test", type: "main", index: 0 }
           ]
         ]
       },

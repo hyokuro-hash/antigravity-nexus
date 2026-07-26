@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.5] - 2026-07-27
+
+### Added
+- Google Sheets의 3가지 핵심 기능(Read, Append, Update)에 대한 순차적 테스트 연동 완료
+  - `Google Sheets - Read Test` (Operation: getAll) ➡️ `Google Sheets - Append Test` (Operation: append) ➡️ `Google Sheets - Update Test` (Operation: update) 파이프라인 체이닝 구성
+  - `By URL` 모드를 활용하여 n8n UI 상의 드롭다운 로딩 경고(Choose...)를 원천 해결
+
 ## [0.7.4] - 2026-07-27
 
 ### Added
