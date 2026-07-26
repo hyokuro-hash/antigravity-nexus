@@ -141,7 +141,7 @@ async function createWorkflow() {
           },
           sheetName: {
             __rl: true,
-            value: "시트1",
+            value: "gid://1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/0",
             mode: "list"
           },
           options: {}
@@ -169,7 +169,7 @@ async function createWorkflow() {
           },
           sheetName: {
             __rl: true,
-            value: "시트1",
+            value: "gid://1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/0",
             mode: "list"
           },
           columns: {
@@ -207,7 +207,7 @@ async function createWorkflow() {
           },
           sheetName: {
             __rl: true,
-            value: "시트1",
+            value: "gid://1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/0",
             mode: "list"
           },
           columns: {

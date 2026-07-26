@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.1] - 2026-07-27
+
+### Fixed
+- Google Sheets 노드의 `sheetName` 값 형식 최종 정정:
+  - n8n `list` 모드 파라미터가 단순 텍스트 시트명 `"시트1"` 대신 내부 GID URL 형식(`gid://1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/0`)을 명세 규격으로 요구하는 버그 조치 완료
+
 ## [0.8.0] - 2026-07-27
 
 ### Fixed
