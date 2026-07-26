@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.8] - 2026-07-27
+
+### Changed
+- `.antigravityrules`에 Google Sheets 파라미터 매핑 규칙(Document: By ID, Sheet: From List/By Name) 구체적 수칙 추가 명문화
+
 ## [0.7.7] - 2026-07-27
 
 ### Fixed
