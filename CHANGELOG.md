@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.0] - 2026-07-27
+
+### Fixed
+- Google Sheets 노드의 `sheetName` 파라미터 매핑 호환성 교정:
+  - n8n v2.31.6 버전의 Google Sheets V4 규격에서 `mode: "name"` 구문이 해석되지 않는 현상 조치
+  - `sheetName` 매핑 모드를 `list`(From List)로 전면 정정하고 값을 `"시트1"`로 복구하여, 사용자 화면의 From List 설정과 100% 호환되도록 수리
+
 ## [0.7.9] - 2026-07-27
 
 ### Changed

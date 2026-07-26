@@ -142,7 +142,7 @@ async function createWorkflow() {
           sheetName: {
             __rl: true,
             value: "시트1",
-            mode: "name"
+            mode: "list"
           },
           options: {}
         },
@@ -170,7 +170,7 @@ async function createWorkflow() {
           sheetName: {
             __rl: true,
             value: "시트1",
-            mode: "name"
+            mode: "list"
           },
           columns: {
             mappingMode: "defineBelow",
@@ -208,7 +208,7 @@ async function createWorkflow() {
           sheetName: {
             __rl: true,
             value: "시트1",
-            mode: "name"
+            mode: "list"
           },
           columns: {
             mappingMode: "defineBelow",
