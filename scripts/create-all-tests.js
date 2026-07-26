@@ -141,8 +141,10 @@ async function createWorkflow() {
           },
           sheetName: {
             __rl: true,
-            value: "gid://1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/0",
-            mode: "list"
+            value: "gid=0",
+            mode: "list",
+            cachedResultName: "시트1",
+            cachedResultUrl: "https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0"
           },
           options: {}
         },
@@ -169,8 +171,10 @@ async function createWorkflow() {
           },
           sheetName: {
             __rl: true,
-            value: "gid://1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/0",
-            mode: "list"
+            value: "gid=0",
+            mode: "list",
+            cachedResultName: "시트1",
+            cachedResultUrl: "https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0"
           },
           columns: {
             mappingMode: "defineBelow",
@@ -207,8 +211,10 @@ async function createWorkflow() {
           },
           sheetName: {
             __rl: true,
-            value: "gid://1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/0",
-            mode: "list"
+            value: "gid=0",
+            mode: "list",
+            cachedResultName: "시트1",
+            cachedResultUrl: "https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0"
           },
           columns: {
             mappingMode: "defineBelow",

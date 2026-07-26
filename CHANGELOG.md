@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.2] - 2026-07-27
+
+### Fixed
+- Google Sheets 노드 `sheetName` 매핑 명세를 n8n v2.31.6 정밀 호환 구조로 업데이트:
+  - `sheetName` 값의 포맷을 `"gid=0"`으로 정정하고, UI 캐싱 필드(`cachedResultName: "시트1"`, `cachedResultUrl`)를 노드 생성 스크립트에 공식 편입하여 읽기/쓰기/수정의 모든 노드가 중단 없이 정상 로드 및 구동되도록 해결
+
 ## [0.8.1] - 2026-07-27
 
 ### Fixed
