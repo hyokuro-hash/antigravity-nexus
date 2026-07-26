@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.9] - 2026-07-27
+
+### Changed
+- Google Sheets 테스트 데이터를 고유값 기반으로 작동되도록 동적 표현식으로 수정
+  - `Append` 노드의 ID를 동적 타임스탬프(`=CNT_TEST_{{ $now.format('yyyyMMdd_HHmmss') }}`)로 설정
+  - `Update` 노드가 이전 노드에서 추가된 행의 고유 ID를 표현식(`={{ $json.ID }}`)으로 받아서 상태 값을 `1차대기` ➡️ `1차승인`으로 갱신하도록 처리
+
 ## [0.7.8] - 2026-07-27
 
 ### Changed

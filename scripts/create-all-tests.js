@@ -175,10 +175,10 @@ async function createWorkflow() {
           columns: {
             mappingMode: "defineBelow",
             value: {
-              ID: "CNT_TEST_APPEND_01",
+              ID: "=CNT_TEST_{{ $now.format('yyyyMMdd_HHmmss') }}",
               Status: "1차대기",
               Trigger_Type: "Manual",
-              Topic_Raw: "n8n Google Sheets Append Test"
+              Topic_Raw: "n8n Google Sheets Chained Test"
             },
             schema: []
           },
@@ -213,7 +213,7 @@ async function createWorkflow() {
           columns: {
             mappingMode: "defineBelow",
             value: {
-              ID: "CNT_TEST_APPEND_01",
+              ID: "={{ $json.ID }}",
               Status: "1차승인"
             },
             matchingColumns: [
