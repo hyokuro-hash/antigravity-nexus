@@ -1,0 +1,71 @@
+# Antigravity Workspace Rules - n8n Project
+
+## 1. Core Operating Principles
+- **n8n Workflow Control**: Control and manage all n8n workflows strictly through the n8n Public API or n8n MCP tools.
+- **Workflow Modifications**: When modifying or updating existing workflows, do NOT create new duplicates (POST). Instead, search for the workflow by name using `GET /api/v1/workflows`, and update it in-place using `PUT /api/v1/workflows/{id}`.
+- **Node Schema Compliance**: Ensure generated workflow JSON strictly adheres to official n8n node schema specifications.
+- **Environment Variables**: Always reference API keys, URLs, and sensitive credentials via `.env`. NEVER hardcode sensitive data in source files or node configs.
+
+## 2. Git & Versioning Automation
+- **Auto-Commit Trigger**: Automatically run `git add .` and `git commit` upon completing a logical unit of work.
+- **Commit Message Specification**:
+  - Format: `<type>: <short summary>`
+  - Allowed types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`.
+  - Body Requirement: Write a 2-3 line detail in Korean explaining **what was changed** and **why/the goal of the change**.
+- **CHANGELOG Maintenance**: Log every meaningful change, script addition, and integration result in `CHANGELOG.md` under the root directory with dates and version tags.
+- **Remote Synchronization**: Automatically execute `git push origin main` after a successful commit.
+
+## 3. Safety Guardrails (Essential for Turbo Mode)
+- **Forbidden Git Commands**: NEVER run destructive actions such as `git push --force`, `git reset --hard`, or deleting git histories without explicit prompt confirmation.
+- **Secret Protection**: Ensure `.env` or sensitive API keys are listed in `.gitignore` and NEVER staged/committed.
+
+## 4. MCP & Workflow Technical Constraints
+- **n8n MCP Server**: `https://kuro-factory.app.n8n.cloud/mcp-server/http`
+- **Allowed Tools**: `n8n-mcp`
+- **Apiframe & Suno Automation**:
+  - Authenticate Apiframe API requests using `Authorization: Bearer <API_TOKEN>` sourced from `.env`.
+  - Account for asynchronous task processing (handling task IDs, retry/polling loops, and response validation) when constructing Suno music generation nodes.
+
+## 5. n8n Workflow & Credential Management Rules
+
+### 1. Workflow Update Policy (수정 정책)
+- **Do NOT create duplicate workflows**: When modifying an existing workflow, do NOT create a new workflow (`POST /workflows`).
+- **Use Update Endpoint**: Search for the existing workflow by name or ID, then use `PUT /workflows/{id}` to apply changes within the same workflow.
+- **Cleanup**: If duplicate workflows exist, leave only the most recent version and clean up inactive test workflows.
+
+### 2. Registered Credentials Rules (등록된 자격 증명 사용 규칙)
+When creating or updating nodes that require authentication, strictly use the pre-configured credentials below:
+
+- **Google Drive**:
+  - Type: `googleDriveOAuth2Api`
+  - Name: `Google Drive API`
+  - Rule: Must use native `n8n-nodes-base.googleDrive` node. Do NOT use standard HTTP Request node for Google Drive API.
+  
+- **Google Gemini**:
+  - Type: `googlePalmApi` (or Google Gemini API)
+  - Name: `Google Gemini API`
+  - Rule: Must use `n8n-nodes-base.googleGemini` node or attach `Google Gemini API` credential.
+  - Model Name Rule: When configuring the Chat Model (`@n8n/n8n-nodes-langchain.lmChatGoogleGemini`), must explicitly specify `models/gemini-3.6-flash` (or the latest verified active model) as `modelName` because older versions (1.5/2.5) are deprecated or restricted for new API keys on the v1beta endpoint.
+
+- **Telegram**:
+  - Type: `telegramApi`
+  - Name: `Telegram Bot API`
+  - Rule: Use native `n8n-nodes-base.telegram` node with `Telegram Bot API` credential.
+
+- **Apify**:
+  - Type: `apifyApi` (or MCP OAuth2)
+  - Name: `Apify API`
+  - Rule: If using predefined OAuth2 in HTTP Request node, set `authentication` to `"predefinedCredentialType"` (not `"predefined"`).
+
+- **Apiframe**:
+  - Type: None (Direct Header Auth)
+  - Rule: Uses HTTP Request Node with custom header parameters. Must set `authentication` to `"none"`, enable `sendHeaders: true`, and add a header named `"X-API-Key"` with the value sourced from `process.env.APIFRAME_API_KEY` (avoiding credential manager binding due to sync bugs).
+
+- **Tavily**:
+  - Type: `httpHeaderAuth` (or `tavilyApi`)
+  - Name: `Tavily API`
+  - Rule: When using HTTP Request node, set `authentication` to `"genericCredentialType"` and `genericAuthType` to `"httpHeaderAuth"` (do NOT use `"generic"`). If using native Tavily node, ensure `tavilyApi` credential is mapped correctly.
+
+### 3. Node Configuration Guardrails
+- **Execution Method Check**: Ensure all native nodes have valid `resource` and `operation` fields filled in to prevent `Cannot read properties of undefined (reading 'execute')` errors.
+- **Credential Binding**: Every API node must explicitly bind its corresponding credential from the list above.
