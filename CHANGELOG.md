@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.7] - 2026-07-27
+
+### Fixed
+- Google Sheets 노드의 `documentId` 명세 매핑 방식 정정:
+  - URL 방식 파싱 오류 방지를 위해 `documentId`를 `mode: "id"` 명세로 환원하고 시트 ID(`1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0`)를 명확하게 직접 맵핑
+
 ## [0.7.6] - 2026-07-27
 
 ### Fixed

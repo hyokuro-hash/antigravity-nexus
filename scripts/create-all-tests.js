@@ -136,8 +136,8 @@ async function createWorkflow() {
           operation: "getAll",
           documentId: {
             __rl: true,
-            value: "https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0",
-            mode: "url"
+            value: "1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0",
+            mode: "id"
           },
           sheetName: {
             __rl: true,
@@ -164,8 +164,8 @@ async function createWorkflow() {
           operation: "append",
           documentId: {
             __rl: true,
-            value: "https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0",
-            mode: "url"
+            value: "1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0",
+            mode: "id"
           },
           sheetName: {
             __rl: true,
@@ -202,8 +202,8 @@ async function createWorkflow() {
           operation: "update",
           documentId: {
             __rl: true,
-            value: "https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0",
-            mode: "url"
+            value: "1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0",
+            mode: "id"
           },
           sheetName: {
             __rl: true,
