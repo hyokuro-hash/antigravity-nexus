@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.6] - 2026-07-27
+
+### Fixed
+- Google Sheets 노드 실행 시 `sheetName` 파라미터 확인 불가 오류 해결:
+  - `sheetName` 매핑 모드를 `id`(GID 해상 방식)에서 `name`(명시적 시트 이름 지정 방식)으로 전면 교체
+  - GID 변환을 위한 API 의존성을 끊고 본문 시트 명칭인 `"시트1"`을 직접 타게팅하도록 정정하여 3대 테스트 노드의 정상 구동 보장
+
 ## [0.7.5] - 2026-07-27
 
 ### Added
