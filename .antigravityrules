@@ -88,10 +88,10 @@ When creating or updating nodes that require authentication, strictly use the pr
 - **Node-Level Retry Settings**: To configure "Retry on Fail" on individual nodes in n8n workflow JSON, the settings must be set directly at the root of the node object using the properties `"retryOnFail": true`, `"maxTries": <Number>`, and `"waitBetweenTries": <Milliseconds>` (e.g. `5000` for 5 seconds). Using `"onError": "retry"` is invalid and will be ignored by n8n.
 - **Expression Evaluation Prefix (=)**: Any node parameter in n8n JSON that contains variable expressions (like `{{ $json.body }}` or `{{ $json.text }}`) must be prefixed with an `=` character (e.g. `prompt: "=..."` or `text: "=..."`). If the `=` prefix is omitted, n8n treats the entire value as a static string, causing the raw `{{ ... }}` placeholders to be sent literally to the LLM or external APIs, resulting in "empty data" or evaluation failures.
 
-## 6. Custom Project Agent Skills Usage Guidelines
-When the user requests tasks matching the custom skills located in `.agents/skills/`, you MUST reference their respective instructions and proceed accordingly:
-- **Brand Guidelines (`brand-guidelines`)**: Use when styling files or UI mockups to match Anthropic's brand look-and-feel (colors `#141413`, `#faf9f5`, `#d97757`, and fonts Poppins/Lora).
-- **Canvas Design (`canvas-design`)**: Use when creating visual art (PDFs, PNGs) using design philosophies. Limit text to 10% and prioritize visual composition and craftsmanship.
-- **Content Research Writer (`content-research-writer`)**: Use when drafting long-form content, blog posts, newsletters, outlines, hooks, and managing references/citations.
-- **Image Enhancer (`image-enhancer`)**: Use when upscaling, sharpening text, or cleaning compression artifacts in screenshots or digital images.
-- **YouTube Video Downloader (`youtube-downloader`)**: Use when downloading YouTube videos or extracting audio as MP3 via `scripts/download_video.py`.
+## 6. Agent Skills Guidelines
+This project has 5 dedicated skills defined in `.agents/skills/`. Apply the following skill rules for each task request:
+1. **For research and planning requests:** Refer to the guidelines and structure of the `content-research-writer` skill.
+2. **When blog visuals / SVG / thumbnails are needed:** Generate code/design referring to the `canvas-design` skill.
+3. **When writing image prompts:** Apply the prompt expansion rules of the `image-enhancer` skill.
+4. **When analyzing video data and subtitle structures:** Refer to the guidelines of the `video-downloader` skill.
+5. **When reviewing design/tone & manner:** Reflect the consistency guidelines of the `brand-guidelines` skill.
