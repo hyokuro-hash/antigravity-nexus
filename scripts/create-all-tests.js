@@ -95,7 +95,7 @@ async function createWorkflow() {
         position: [700, 300],
         retryOnFail: true,
         maxTries: 10,
-        waitBetweenTries: 5000
+        waitBetweenTries: 35000
       },
       {
         parameters: {
@@ -109,7 +109,7 @@ async function createWorkflow() {
         position: [700, 450],
         retryOnFail: true,
         maxTries: 10,
-        waitBetweenTries: 5000,
+        waitBetweenTries: 35000,
         credentials: {
           googlePalmApi: {
             id: "1weC7W7NT1xfrtFR",
@@ -129,7 +129,7 @@ async function createWorkflow() {
         position: [900, 300],
         retryOnFail: true,
         maxTries: 10,
-        waitBetweenTries: 5000
+        waitBetweenTries: 35000
       },
       {
         parameters: {
@@ -143,7 +143,7 @@ async function createWorkflow() {
         position: [900, 450],
         retryOnFail: true,
         maxTries: 10,
-        waitBetweenTries: 5000,
+        waitBetweenTries: 35000,
         credentials: {
           googlePalmApi: {
             id: "1weC7W7NT1xfrtFR",
@@ -173,7 +173,7 @@ async function createWorkflow() {
         position: [1300, 300],
         retryOnFail: true,
         maxTries: 10,
-        waitBetweenTries: 5000
+        waitBetweenTries: 35000
       },
       {
         parameters: {
@@ -187,7 +187,7 @@ async function createWorkflow() {
         position: [1300, 450],
         retryOnFail: true,
         maxTries: 10,
-        waitBetweenTries: 5000,
+        waitBetweenTries: 35000,
         credentials: {
           googlePalmApi: {
             id: "1weC7W7NT1xfrtFR",
