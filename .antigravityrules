@@ -95,3 +95,8 @@ This project has 5 dedicated skills defined in `.agents/skills/`. Apply the foll
 3. **When writing image prompts:** Apply the prompt expansion rules of the `image-enhancer` skill.
 4. **When analyzing video data and subtitle structures:** Refer to the guidelines of the `video-downloader` skill.
 5. **When reviewing design/tone & manner:** Reflect the consistency guidelines of the `brand-guidelines` skill.
+
+## 7. Localization & Translation Workflow Rules (국제화 및 영문 최적화 규칙)
+- **Agent Reasoning & Processing (에이전트 추론)**: When the user communicates in Korean, the agent should internally process the reasoning, file searches, and technical tasks in English to maximize precision, but must always present the final responses and walkthroughs in natural Korean.
+- **Node Prompts (노드 프롬프트)**: Write all system and planning prompts in n8n LLM nodes in English to ensure high instruction compliance. Add explicit instructions at the end of the prompt to output the final user-facing text (script, notifications) in natural Korean.
+- **Comments & Annotations (한글 주석)**: To ensure readability for the user, always include clear Korean comments or description fields inside the node parameters and JS code blocks explaining what the English prompts or code blocks do.
