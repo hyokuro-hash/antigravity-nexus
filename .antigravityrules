@@ -44,8 +44,12 @@ When creating or updating nodes that require authentication, strictly use the pr
 - **Google Sheets**:
   - Type: `googleSheetsOAuth2Api`
   - Name: `Google Sheets account`
-  - Rule: Must use native `n8n-nodes-base.googleSheets` node with `Google Sheets account` credential for all sheet operations (append, update, getAll).
+  - Rule: Must use native `n8n-nodes-base.googleSheets` node with `Google Sheets account` credential for all sheet operations (append, update).
   - Parameter Mapping Rule: 
+    - **Operation**:
+      - For reading rows (**`Get Row(s)`**), the `operation` parameter should be **omitted** entirely in the JSON parameters object. In n8n v4, omitting the operation parameter defaults it to "Get Row(s)". Do NOT write `"readRows"` or `"read"`, as this is treated as an invalid value in this version and hides the sheet configuration.
+    - **Always Output Data**:
+      - When reading sheets that may have only the header row and no data (empty sheet), always set `"alwaysOutputData": true` at the node's root level to prevent workflow errors when no data is returned.
     - **Document**: Always use **`By ID`** (`mode: "id"`) with the spreadsheet ID (do NOT use `By URL` to avoid URL parsing and sync errors).
     - **Sheet**: Use **`From List`** (or `By Name`) with the exact sheet tab name (e.g. `"시트1"`) to guarantee stable schema resolution.
   
@@ -76,3 +80,18 @@ When creating or updating nodes that require authentication, strictly use the pr
 ### 3. Node Configuration Guardrails
 - **Execution Method Check**: Ensure all native nodes have valid `resource` and `operation` fields filled in to prevent `Cannot read properties of undefined (reading 'execute')` errors.
 - **Credential Binding**: Every API node must explicitly bind its corresponding credential from the list above.
+- **If Node Condition Typing**: In n8n v2 If nodes (`n8n-nodes-base.if`), the `"operator"` field inside each object of the `"conditions"` array must be defined as an object rather than a string.
+  - For Boolean checks: `"operator": { "type": "boolean", "operation": "true", "singleValue": true }`
+  - For Number checks: `"operator": { "type": "number", "operation": "smaller" }` (e.g. for less-than comparisons)
+  Omitting this object structure and writing string operators (e.g. `"isTrue"`, `"lt"`) triggers a schema processing crash (`Cannot read properties of undefined (reading 'toLowerCase')`).
+- **Connection Input Port Indexing**: In n8n workflow JSON, the `index` property in the connection target object represents the **input port index of the target node**. For almost all standard nodes (including If and Telegram nodes), they have only a single input port, so the target `index` MUST be `0`. Setting target `index` to `1` (or anything else) routes the connection to a non-existent second input, preventing n8n from matching incoming data with the node's parameters, causing conditions/parameters to be ignored or display as empty in the UI.
+- **Node-Level Retry Settings**: To configure "Retry on Fail" on individual nodes in n8n workflow JSON, the settings must be set directly at the root of the node object using the properties `"retryOnFail": true`, `"maxTries": <Number>`, and `"waitBetweenTries": <Milliseconds>` (e.g. `5000` for 5 seconds). Using `"onError": "retry"` is invalid and will be ignored by n8n.
+- **Expression Evaluation Prefix (=)**: Any node parameter in n8n JSON that contains variable expressions (like `{{ $json.body }}` or `{{ $json.text }}`) must be prefixed with an `=` character (e.g. `prompt: "=..."` or `text: "=..."`). If the `=` prefix is omitted, n8n treats the entire value as a static string, causing the raw `{{ ... }}` placeholders to be sent literally to the LLM or external APIs, resulting in "empty data" or evaluation failures.
+
+## 6. Custom Project Agent Skills Usage Guidelines
+When the user requests tasks matching the custom skills located in `.agents/skills/`, you MUST reference their respective instructions and proceed accordingly:
+- **Brand Guidelines (`brand-guidelines`)**: Use when styling files or UI mockups to match Anthropic's brand look-and-feel (colors `#141413`, `#faf9f5`, `#d97757`, and fonts Poppins/Lora).
+- **Canvas Design (`canvas-design`)**: Use when creating visual art (PDFs, PNGs) using design philosophies. Limit text to 10% and prioritize visual composition and craftsmanship.
+- **Content Research Writer (`content-research-writer`)**: Use when drafting long-form content, blog posts, newsletters, outlines, hooks, and managing references/citations.
+- **Image Enhancer (`image-enhancer`)**: Use when upscaling, sharpening text, or cleaning compression artifacts in screenshots or digital images.
+- **YouTube Video Downloader (`youtube-downloader`)**: Use when downloading YouTube videos or extracting audio as MP3 via `scripts/download_video.py`.
