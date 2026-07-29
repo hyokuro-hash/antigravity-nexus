@@ -100,3 +100,9 @@ This project has 5 dedicated skills defined in `.agents/skills/`. Apply the foll
 - **Agent Reasoning & Processing (에이전트 추론)**: When the user communicates in Korean, the agent should internally process the reasoning, file searches, and technical tasks in English to maximize precision, but must always present the final responses and walkthroughs in natural Korean.
 - **Node Prompts (노드 프롬프트)**: Write all system and planning prompts in n8n LLM nodes in English to ensure high instruction compliance. Add explicit instructions at the end of the prompt to output the final user-facing text (script, notifications) in natural Korean.
 - **Comments & Annotations (한글 주석)**: To ensure readability for the user, always include clear Korean comments or description fields inside the node parameters and JS code blocks explaining what the English prompts or code blocks do.
+
+## 8. Token & API Cost Optimization Guardrails (토큰 및 API 비용 최적화 가이드라인)
+- **Multi-Item Execution Guard (다중 실행 방지)**: Nodes retrieving lists or database rows (e.g. Google Sheets read) must be consolidated into a single item via Code nodes before passing to downstream API or LLM nodes to prevent runaway batch executions.
+- **LLM Retry Limits (AI 노드 재시도 제약)**: Set `maxTries` to at most **3** (instead of 10) on LLM/HTTP nodes to prevent infinite billing loops during prolonged API outages or rate-limiting.
+- **Loop Circuit Breakers (반복 루프 안전 차단기)**: Every programmatic loop (e.g. rewrite retries) must enforce a strict execution count ceiling (e.g., maximum of 2 retries per content item) to prevent infinite loops.
+- **State Caching & Reuse (데이터 캐싱 및 재사용)**: Downstream loops must reuse cached intermediate data (e.g., raw Tavily search logs saved in Google Sheets) instead of calling fresh external search engines or LLM research steps repeatedly.
