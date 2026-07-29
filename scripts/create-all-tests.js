@@ -356,9 +356,10 @@ return {
       {
         parameters: {
           chatId: telegramChatId,
-          text: "=📢 **[1차 콘텐츠 가대본 기획 완료]**\n\n📌 **주제**: {{ $('4. AI 검수 결과 파싱').first().json.topic }}\n⭐ **AI 검수 점수**: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n\n📝 **기획 및 가대본 요약**:\n{{ $('4. AI 검수 결과 파싱').first().json.script_summary }}\n\n위 가대본으로 다음 단계(최종 대본 및 영상 리소스 제작)를 진행할까요?",
+          text: "=📢 <b>[1차 콘텐츠 가대본 기획 완료]</b>\n\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n⭐ <b>AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n\n📝 <b>기획 및 가대본 요약</b>:\n{{ $('4. AI 검수 결과 파싱').first().json.script_summary.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n\n위 가대본으로 다음 단계(최종 대본 및 영상 리소스 제작)를 진행할까요?",
           additionalFields: {
             appendAttribution: false,
+            parseMode: "HTML",
             replyMarkup: "={{ { inline_keyboard: [ [ { text: '👍 1차 승인', callback_data: '=approve_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }, { text: '👎 1차 거절', callback_data: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ], [ { text: '🔄 피드백 반영 재시도', callback_data: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ] ] } }}"
           }
         },
@@ -417,9 +418,10 @@ return {
       {
         parameters: {
           chatId: telegramChatId,
-          text: "=⚠️ **[가대본 기획 및 AI 검수 최종 실패]**\n\n🤖 AI 검수를 통과하지 못했습니다.\n\n📌 **주제**: {{ $('4. AI 검수 결과 파싱').first().json.topic }}\n⭐ **최종 AI 검수 점수**: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n❌ **최종 반려 피드백**:\n{{ $('4. AI 검수 결과 파싱').first().json.feedback }}\n\n피드백을 반영하여 대본을 다시 작성하시겠습니까?",
+          text: "=⚠️ <b>[가대본 기획 및 AI 검수 최종 실패]</b>\n\n🤖 AI 검수를 통과하지 못했습니다.\n\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n⭐ <b>최종 AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n❌ <b>최종 반려 피드백</b>:\n{{ $('4. AI 검수 결과 파싱').first().json.feedback.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n\n피드백을 반영하여 대본을 다시 작성하시겠습니까?",
           additionalFields: {
             appendAttribution: false,
+            parseMode: "HTML",
             replyMarkup: "={{ { inline_keyboard: [ [ { text: '🔄 피드백 반영 재시도', callback_data: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }, { text: '👎 최종 반려', callback_data: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ] ] } }}"
           }
         },
@@ -543,9 +545,10 @@ return {
           operation: "editMessageText",
           chatId: telegramChatId,
           messageId: "={{ $('Parse Callback').first().json.message_id }}",
-          text: "= {{ $('Parse Callback').first().json.action === 'approve' ? '✅ **[1차 승인 완료]**' : '❌ **[1차 반려 완료]**' }}\n\n📌 **주제**: {{ $json.Topic_Raw }}\n- **상태**: {{ $('Parse Callback').first().json.action === 'approve' ? '1차 승인 완료 (2차 최종 제작 단계 대기)' : '최종 반려 및 중단 처리됨' }}",
+          text: "= {{ $('Parse Callback').first().json.action === 'approve' ? '✅ <b>[1차 승인 완료]</b>' : '❌ <b>[1차 반려 완료]</b>' }}\n\n📌 <b>주제</b>: {{ $json.Topic_Raw.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n- <b>상태</b>: {{ $('Parse Callback').first().json.action === 'approve' ? '1차 승인 완료 (2차 최종 제작 단계 대기)' : '최종 반려 및 중단 처리됨' }}",
           additionalFields: {
-            appendAttribution: false
+            appendAttribution: false,
+            parseMode: "HTML"
           }
         },
         id: "telegram-clear-buttons",
@@ -604,9 +607,10 @@ return {
           operation: "editMessageText",
           chatId: telegramChatId,
           messageId: "={{ $('Parse Callback').first().json.message_id }}",
-          text: "=🔄 **[피드백 반영 재작성 시작]**\n\nAI가 이전 반려 피드백을 수용하여 대본을 새로 다시 작성하고 있습니다. 잠시만 기다려주세요...\n(ID: {{ $json.ID }})",
+          text: "=🔄 <b>[피드백 반영 재작성 시작]</b>\n\nAI가 이전 반려 피드백을 수용하여 대본을 새로 다시 작성하고 있습니다. 잠시만 기다려주세요...\n(ID: {{ $json.ID }})",
           additionalFields: {
-            appendAttribution: false
+            appendAttribution: false,
+            parseMode: "HTML"
           }
         },
         id: "telegram-notify-retry-start",
@@ -674,9 +678,10 @@ return {
       {
         parameters: {
           chatId: telegramChatId,
-          text: "= {{ $('4. AI 검수 결과 파싱').first().json.pass ? '📢 **[재재작성 완료 - 1차 검수 통과]**' : '⚠️ **[재재작성 완료 - AI 검수 최종 실패]**' }}\n\n📌 **주제**: {{ $('4. AI 검수 결과 파싱').first().json.topic }}\n⭐ **AI 검수 점수**: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n{{ $('4. AI 검수 결과 파싱').first().json.pass ? '' : '❌ **최종 반려 피드백**:\\n' + $('4. AI 검수 결과 파싱').first().json.feedback }}\n\n{{ $('4. AI 검수 결과 파싱').first().json.pass ? '📝 **기획 및 가대본 요약**:\\n' + $('4. AI 검수 결과 파싱').first().json.script_summary + '\\n\\n위 가대본으로 다음 단계를 진행할까요?' : '피드백을 반영하여 다시 대본을 작성하시겠습니까?' }}",
+          text: "= {{ $('4. AI 검수 결과 파싱').first().json.pass ? '📢 <b>[재재작성 완료 - 1차 검수 통과]</b>' : '⚠️ <b>[재재작성 완료 - AI 검수 최종 실패]</b>' }}\n\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n⭐ <b>AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n{{ $('4. AI 검수 결과 파싱').first().json.pass ? '' : '❌ <b>최종 반려 피드백</b>:\\n' + $('4. AI 검수 결과 파싱').first().json.feedback.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n\n{{ $('4. AI 검수 결과 파싱').first().json.pass ? '📝 <b>기획 및 가대본 요약</b>:\\n' + $('4. AI 검수 결과 파싱').first().json.script_summary.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\\n\\n위 가대본으로 다음 단계를 진행할까요?' : '피드백을 반영하여 다시 대본을 작성하시겠습니까?' }}",
           additionalFields: {
             appendAttribution: false,
+            parseMode: "HTML",
             replyMarkup: "={{ { inline_keyboard: $('4. AI 검수 결과 파싱').first().json.pass ? [ [ { text: '👍 1차 승인', callback_data: '=approve_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }, { text: '👎 1차 거절', callback_data: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ], [ { text: '🔄 피드백 반영 재시도', callback_data: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ] ] : [ [ { text: '🔄 피드백 반영 재시도', callback_data: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }, { text: '👎 최종 반려', callback_data: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ] ] } }}"
           }
         },
