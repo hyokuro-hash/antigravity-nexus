@@ -503,11 +503,13 @@ return {
             cachedResultName: "시트1",
             cachedResultUrl: "https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0"
           },
-          updateKey: "ID",
-          updateKeyValue: "={{ $json.row_id }}",
           columns: {
             mappingMode: "defineBelow",
+            matchingColumns: [
+              "ID"
+            ],
             value: {
+              ID: "={{ $json.row_id }}",
               Status: "={{ $('Parse Callback').first().json.action === 'approve' ? '1차승인완료' : '1차거절' }}"
             },
             schema: []
@@ -620,11 +622,13 @@ return {
             cachedResultName: "시트1",
             cachedResultUrl: "https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0"
           },
-          updateKey: "ID",
-          updateKeyValue: "={{ $('4. AI 검수 결과 파싱').first().json.row_id }}",
           columns: {
             mappingMode: "defineBelow",
+            matchingColumns: [
+              "ID"
+            ],
             value: {
+              ID: "={{ $('4. AI 검수 결과 파싱').first().json.row_id }}",
               Research_Data: "= [가대본]\n{{ $json.script_draft }}\n\n---\n[자료조사 원본]\n{{ $('Prepare QA Input').first().json.research_text }}",
               Confirm_1차_Fe: "={{ $json.pass ? '재시도 통과 (점수: ' + $json.score + '/10)' : $json.feedback }}",
               Status: "={{ $json.pass ? '1차승인대기' : '1차검수탈락' }}"
