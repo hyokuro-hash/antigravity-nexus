@@ -115,7 +115,7 @@ return {
       },
       {
         parameters: {
-          modelName: "models/gemini-3.6-flash",
+          modelName: "models/gemini-1.5-flash",
           options: {}
         },
         id: "gemini-chat-model-research",
@@ -149,7 +149,7 @@ return {
       },
       {
         parameters: {
-          modelName: "models/gemini-3.6-flash",
+          modelName: "models/gemini-1.5-flash",
           options: {}
         },
         id: "gemini-chat-model-planning",
@@ -193,7 +193,7 @@ return {
       },
       {
         parameters: {
-          modelName: "models/gemini-3.6-flash",
+          modelName: "models/gemini-1.5-flash",
           options: {}
         },
         id: "gemini-chat-model-qa",
