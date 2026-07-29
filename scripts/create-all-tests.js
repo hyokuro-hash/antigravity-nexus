@@ -519,6 +519,7 @@ return {
         type: "n8n-nodes-base.googleSheets",
         typeVersion: 4,
         position: [700, 720],
+        onError: "continueRegularInfo",
         credentials: {
           googleSheetsOAuth2Api: {
             id: "kYYPtfXi2R21Raso",
@@ -637,6 +638,7 @@ return {
         type: "n8n-nodes-base.googleSheets",
         typeVersion: 4,
         position: [2300, 300],
+        onError: "continueRegularInfo",
         credentials: {
           googleSheetsOAuth2Api: {
             id: "kYYPtfXi2R21Raso",
@@ -677,9 +679,68 @@ return {
             name: "Telegram Bot API"
           }
         }
+      },
+      // ==========================================
+      // FLOW 3: Standalone Telegram Button Test Flow (Y: -100)
+      // ==========================================
+      {
+        parameters: {},
+        id: "test-manual-trigger",
+        name: "Manual Trigger - Test Send",
+        type: "n8n-nodes-base.manualTrigger",
+        typeVersion: 1,
+        position: [100, -100]
+      },
+      {
+        parameters: {
+          jsCode: "return {\n  row_id: \"TEST_ROW_123\",\n  topic: \"스페이스X의 1시간 우주 택배 혁명\",\n  score: 9,\n  script_summary: \"이것은 인라인 버튼 수신 테스트용 간소화 요약문입니다. 우주 택배 서비스가 가져올 비즈니스 기회를 테스트합니다.\"\n};"
+        },
+        id: "mock-parser-data",
+        name: "Mock Parser Data",
+        type: "n8n-nodes-base.code",
+        typeVersion: 2,
+        position: [300, -100]
+      },
+      {
+        parameters: {
+          method: "POST",
+          url: `https://api.telegram.org/bot${telegramToken}/sendMessage`,
+          sendBody: true,
+          specifyBody: "json",
+          jsonBody: `={\n  "chat_id": "${telegramChatId}",\n  "text": "📢 <b>[테스트] 1차 콘텐츠 가대본 기획 완료</b>\\n\\n📌 <b>주제</b>: {{ $('Mock Parser Data').first().json.topic }}\\n⭐ <b>AI 검수 점수</b>: {{ $('Mock Parser Data').first().json.score }}/10점\\n\\n📝 <b>기획 요약</b>:\\n{{ $('Mock Parser Data').first().json.script_summary }}\\n\\n📁 <a href=\\"https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0\\"><b>구글 시트에서 전체 가대본 보기</b></a>\\n\\n위 가대본으로 다음 단계(최종 대본 및 영상 리소스 제작)를 진행할까요?",\n  "parse_mode": "HTML",\n  "reply_markup": {\n    "inline_keyboard": [\n      [\n        { "text": "👍 1차 승인", "callback_data": "=approve_1_{{ $('Mock Parser Data').first().json.row_id }}" },\n        { "text": "👎 1차 거절", "callback_data": "=reject_1_{{ $('Mock Parser Data').first().json.row_id }}" }\n      ],\n      [\n        { "text": "🔄 피드백 반영 재시도", "callback_data": "=retry_1_{{ $('Mock Parser Data').first().json.row_id }}" }\n      ]\n    ]\n  }\n}`,
+          options: {}
+        },
+        id: "test-telegram-send",
+        name: "Telegram - Test Send",
+        type: "n8n-nodes-base.httpRequest",
+        typeVersion: 4.1,
+        position: [500, -100]
       }
     ],
     connections: {
+      // CONNECTIONS FOR FLOW 3 (Test Flow)
+      "Manual Trigger - Test Send": {
+        main: [
+          [
+            {
+              node: "Mock Parser Data",
+              type: "main",
+              index: 0
+            }
+          ]
+        ]
+      },
+      "Mock Parser Data": {
+        main: [
+          [
+            {
+              node: "Telegram - Test Send",
+              type: "main",
+              index: 0
+            }
+          ]
+        ]
+      },
       // CONNECTIONS FOR FLOW 1
       "Manual Trigger": {
         main: [
