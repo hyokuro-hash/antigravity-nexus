@@ -356,7 +356,7 @@ return {
       {
         parameters: {
           chatId: telegramChatId,
-          text: "=📢 <b>[1차 콘텐츠 가대본 기획 완료]</b>\n\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n⭐ <b>AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n\n📝 <b>기획 및 가대본 요약</b>:\n{{ $('4. AI 검수 결과 파싱').first().json.script_summary.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n\n위 가대본으로 다음 단계(최종 대본 및 영상 리소스 제작)를 진행할까요?",
+          text: "=📢 <b>[1차 콘텐츠 가대본 기획 완료]</b>\n\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n⭐ <b>AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n\n📝 <b>기획 및 가대본 요약</b>:\n{{ $('4. AI 검수 결과 파싱').first().json.script_summary.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n\n위 가대본으로 다음 단계(최종 대본 및 영상 리소스 제작)를 진행할까요?",
           additionalFields: {
             appendAttribution: false,
             parseMode: "HTML",
@@ -418,7 +418,7 @@ return {
       {
         parameters: {
           chatId: telegramChatId,
-          text: "=⚠️ <b>[가대본 기획 및 AI 검수 최종 실패]</b>\n\n🤖 AI 검수를 통과하지 못했습니다.\n\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n⭐ <b>최종 AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n❌ <b>최종 반려 피드백</b>:\n{{ $('4. AI 검수 결과 파싱').first().json.feedback.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n\n피드백을 반영하여 대본을 다시 작성하시겠습니까?",
+          text: "=⚠️ <b>[가대본 기획 및 AI 검수 최종 실패]</b>\n\n🤖 AI 검수를 통과하지 못했습니다.\n\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n⭐ <b>최종 AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n❌ <b>최종 반려 피드백</b>:\n{{ $('4. AI 검수 결과 파싱').first().json.feedback.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n\n피드백을 반영하여 대본을 다시 작성하시겠습니까?",
           additionalFields: {
             appendAttribution: false,
             parseMode: "HTML",
@@ -545,7 +545,7 @@ return {
           operation: "editMessageText",
           chatId: telegramChatId,
           messageId: "={{ $('Parse Callback').first().json.message_id }}",
-          text: "= {{ $('Parse Callback').first().json.action === 'approve' ? '✅ <b>[1차 승인 완료]</b>' : '❌ <b>[1차 반려 완료]</b>' }}\n\n📌 <b>주제</b>: {{ $json.Topic_Raw.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n- <b>상태</b>: {{ $('Parse Callback').first().json.action === 'approve' ? '1차 승인 완료 (2차 최종 제작 단계 대기)' : '최종 반려 및 중단 처리됨' }}",
+          text: "= {{ $('Parse Callback').first().json.action === 'approve' ? '✅ <b>[1차 승인 완료]</b>' : '❌ <b>[1차 반려 완료]</b>' }}\n\n📌 <b>주제</b>: {{ $json.Topic_Raw.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n- <b>상태</b>: {{ $('Parse Callback').first().json.action === 'approve' ? '1차 승인 완료 (2차 최종 제작 단계 대기)' : '최종 반려 및 중단 처리됨' }}",
           additionalFields: {
             appendAttribution: false,
             parseMode: "HTML"
@@ -678,7 +678,7 @@ return {
       {
         parameters: {
           chatId: telegramChatId,
-          text: "= {{ $('4. AI 검수 결과 파싱').first().json.pass ? '📢 <b>[재재작성 완료 - 1차 검수 통과]</b>' : '⚠️ <b>[재재작성 완료 - AI 검수 최종 실패]</b>' }}\n\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n⭐ <b>AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n{{ $('4. AI 검수 결과 파싱').first().json.pass ? '' : '❌ <b>최종 반려 피드백</b>:\\n' + $('4. AI 검수 결과 파싱').first().json.feedback.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n\n{{ $('4. AI 검수 결과 파싱').first().json.pass ? '📝 <b>기획 및 가대본 요약</b>:\\n' + $('4. AI 검수 결과 파싱').first().json.script_summary.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\\n\\n위 가대본으로 다음 단계를 진행할까요?' : '피드백을 반영하여 다시 대본을 작성하시겠습니까?' }}",
+          text: "= {{ $('4. AI 검수 결과 파싱').first().json.pass ? '📢 <b>[재재작성 완료 - 1차 검수 통과]</b>' : '⚠️ <b>[재재작성 완료 - AI 검수 최종 실패]</b>' }}\n\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n⭐ <b>AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n{{ $('4. AI 검수 결과 파싱').first().json.pass ? '' : '❌ <b>최종 반려 피드백</b>:\\n' + $('4. AI 검수 결과 파싱').first().json.feedback.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n\n{{ $('4. AI 검수 결과 파싱').first().json.pass ? '📝 <b>기획 및 가대본 요약</b>:\\n' + $('4. AI 검수 결과 파싱').first().json.script_summary.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') + '\\n\\n위 가대본으로 다음 단계를 진행할까요?' : '피드백을 반영하여 다시 대본을 작성하시겠습니까?' }}",
           additionalFields: {
             appendAttribution: false,
             parseMode: "HTML",
