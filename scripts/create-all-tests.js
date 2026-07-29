@@ -359,7 +359,7 @@ return {
           text: "=📢 **[1차 콘텐츠 가대본 기획 완료]**\n\n📌 **주제**: {{ $('4. AI 검수 결과 파싱').first().json.topic }}\n⭐ **AI 검수 점수**: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n\n📝 **기획 및 가대본 요약**:\n{{ $('4. AI 검수 결과 파싱').first().json.script_summary }}\n\n위 가대본으로 다음 단계(최종 대본 및 영상 리소스 제작)를 진행할까요?",
           additionalFields: {
             appendAttribution: false,
-            replyMarkup: "={{ { inline_keyboard: [ [ { text: '👍 1차 승인', callbackData: '=approve_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }, { text: '👎 1차 거절', callbackData: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ], [ { text: '🔄 피드백 반영 재시도', callbackData: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ] ] } }}"
+            replyMarkup: "={{ { inline_keyboard: [ [ { text: '👍 1차 승인', callback_data: '=approve_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }, { text: '👎 1차 거절', callback_data: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ], [ { text: '🔄 피드백 반영 재시도', callback_data: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ] ] } }}"
           }
         },
         id: "telegram-approval-node",
@@ -420,7 +420,7 @@ return {
           text: "=⚠️ **[가대본 기획 및 AI 검수 최종 실패]**\n\n🤖 AI 검수를 통과하지 못했습니다.\n\n📌 **주제**: {{ $('4. AI 검수 결과 파싱').first().json.topic }}\n⭐ **최종 AI 검수 점수**: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n❌ **최종 반려 피드백**:\n{{ $('4. AI 검수 결과 파싱').first().json.feedback }}\n\n피드백을 반영하여 대본을 다시 작성하시겠습니까?",
           additionalFields: {
             appendAttribution: false,
-            replyMarkup: "={{ { inline_keyboard: [ [ { text: '🔄 피드백 반영 재시도', callbackData: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }, { text: '👎 최종 반려', callbackData: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ] ] } }}"
+            replyMarkup: "={{ { inline_keyboard: [ [ { text: '🔄 피드백 반영 재시도', callback_data: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }, { text: '👎 최종 반려', callback_data: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ] ] } }}"
           }
         },
         id: "telegram-failure-notification",
@@ -677,7 +677,7 @@ return {
           text: "= {{ $('4. AI 검수 결과 파싱').first().json.pass ? '📢 **[재재작성 완료 - 1차 검수 통과]**' : '⚠️ **[재재작성 완료 - AI 검수 최종 실패]**' }}\n\n📌 **주제**: {{ $('4. AI 검수 결과 파싱').first().json.topic }}\n⭐ **AI 검수 점수**: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n{{ $('4. AI 검수 결과 파싱').first().json.pass ? '' : '❌ **최종 반려 피드백**:\\n' + $('4. AI 검수 결과 파싱').first().json.feedback }}\n\n{{ $('4. AI 검수 결과 파싱').first().json.pass ? '📝 **기획 및 가대본 요약**:\\n' + $('4. AI 검수 결과 파싱').first().json.script_summary + '\\n\\n위 가대본으로 다음 단계를 진행할까요?' : '피드백을 반영하여 다시 대본을 작성하시겠습니까?' }}",
           additionalFields: {
             appendAttribution: false,
-            replyMarkup: "={{ { inline_keyboard: $('4. AI 검수 결과 파싱').first().json.pass ? [ [ { text: '👍 1차 승인', callbackData: '=approve_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }, { text: '👎 1차 거절', callbackData: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ], [ { text: '🔄 피드백 반영 재시도', callbackData: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ] ] : [ [ { text: '🔄 피드백 반영 재시도', callbackData: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }, { text: '👎 최종 반려', callbackData: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ] ] } }}"
+            replyMarkup: "={{ { inline_keyboard: $('4. AI 검수 결과 파싱').first().json.pass ? [ [ { text: '👍 1차 승인', callback_data: '=approve_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }, { text: '👎 1차 거절', callback_data: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ], [ { text: '🔄 피드백 반영 재시도', callback_data: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ] ] : [ [ { text: '🔄 피드백 반영 재시도', callback_data: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }, { text: '👎 최종 반려', callback_data: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } ] ] } }}"
           }
         },
         id: "telegram-retry-notify",
