@@ -62,6 +62,21 @@ async function createWorkflow() {
       },
       {
         parameters: {
+          jsCode: `// 이 노드는 여러 개의 구글 시트 행(아이템)들을 단 하나의 아이템으로 병합하여,
+// 다운스트림 노드들이 행 개수만큼 반복 실행되는 현상을 방지합니다.
+const topics = $input.all().map(item => item.json.Topic_Raw).filter(Boolean);
+return {
+  topics: topics
+};`
+        },
+        id: "merge-topics-node",
+        name: "0-1. 기존 주제 병합",
+        type: "n8n-nodes-base.code",
+        typeVersion: 2,
+        position: [500, 300]
+      },
+      {
+        parameters: {
           method: "POST",
           authentication: "genericCredentialType",
           genericAuthType: "httpHeaderAuth",
@@ -75,7 +90,7 @@ async function createWorkflow() {
         name: "1. 실시간 트렌드 검색",
         type: "n8n-nodes-base.httpRequest",
         typeVersion: 4.1,
-        position: [500, 300],
+        position: [700, 300],
         credentials: {
           httpHeaderAuth: {
             id: "i2ipHBcUj9lGKIpC",
@@ -86,15 +101,15 @@ async function createWorkflow() {
       {
         parameters: {
           promptType: "define",
-          prompt: `=# [한글 주석] 이 노드는 실시간 트렌드를 검색하여 최신 주제 1개를 선정하고 관련 팩트를 조사합니다.\n# (This node selects a trending tech topic and gathers research facts with proper citations)\n\nYou are a professional IT/Tech trend editor.\nAnalyze the provided real-time search results: {{ JSON.stringify($json.results) }}\n\n1. Automatically select ONE latest, most engaging tech/IT topic.\n   * Start your output with the exact line "자동 선정 주제: [Selected Topic Name]" (Do NOT translate this header, keep it in Korean).\n   * Avoid topics in this list (prevent duplicates):\n     {{ $('0. 기존 주제 목록 조회').all().map(item => item.json.Topic_Raw).filter(Boolean).join(', ') || 'None' }}\n2. Conduct research and structure the outline following these rules:\n   * Identify 3 core Facts. Each fact MUST include a numbered citation link mapping to a URL in the search results (e.g., [1], [2]).\n   * Identify relevant statistics or concrete real-world cases.\n   * Provide the reference URLs list at the end.\n\nIMPORTANT: Write the entire research report in natural, professional Korean.`
+          prompt: `=# [한글 주석] 이 노드는 실시간 트렌드를 검색하여 최신 주제 1개를 선정하고 관련 팩트를 조사합니다.\n# (This node selects a trending tech topic and gathers research facts with proper citations)\n\nYou are a professional IT/Tech trend editor.\nAnalyze the provided real-time search results: {{ JSON.stringify($json.results) }}\n\n1. Automatically select ONE latest, most engaging tech/IT topic.\n   * Start your output with the exact line "자동 선정 주제: [Selected Topic Name]" (Do NOT translate this header, keep it in Korean).\n   * Avoid topics in this list (prevent duplicates):\n     {{ $('0-1. 기존 주제 병합').first().json.topics.join(', ') || 'None' }}\n2. Conduct research and structure the outline following these rules:\n   * Identify 3 core Facts. Each fact MUST include a numbered citation link mapping to a URL in the search results (e.g., [1], [2]).\n   * Identify relevant statistics or concrete real-world cases.\n   * Provide the reference URLs list at the end.\n\nIMPORTANT: Write the entire research report in natural, professional Korean.`
         },
         id: "research-node",
         name: "2. 자동 주제 선정 & 자료 조사",
         type: "@n8n/n8n-nodes-langchain.chainLlm",
         typeVersion: 1,
-        position: [700, 300],
+        position: [900, 300],
         retryOnFail: true,
-        maxTries: 10,
+        maxTries: 3,
         waitBetweenTries: 35000
       },
       {
@@ -106,9 +121,9 @@ async function createWorkflow() {
         name: "Gemini Chat Model - Research",
         type: "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
         typeVersion: 1,
-        position: [700, 450],
+        position: [900, 450],
         retryOnFail: true,
-        maxTries: 10,
+        maxTries: 3,
         waitBetweenTries: 35000,
         credentials: {
           googlePalmApi: {
@@ -126,9 +141,9 @@ async function createWorkflow() {
         name: "2-1. 콘텐츠 기획 및 가대본 제작",
         type: "@n8n/n8n-nodes-langchain.chainLlm",
         typeVersion: 1,
-        position: [900, 300],
+        position: [1100, 300],
         retryOnFail: true,
-        maxTries: 10,
+        maxTries: 3,
         waitBetweenTries: 35000
       },
       {
@@ -140,9 +155,9 @@ async function createWorkflow() {
         name: "Gemini Chat Model - Planning",
         type: "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
         typeVersion: 1,
-        position: [900, 450],
+        position: [1100, 450],
         retryOnFail: true,
-        maxTries: 10,
+        maxTries: 3,
         waitBetweenTries: 35000,
         credentials: {
           googlePalmApi: {
@@ -159,7 +174,7 @@ async function createWorkflow() {
         name: "Prepare QA Input",
         type: "n8n-nodes-base.code",
         typeVersion: 2,
-        position: [1100, 300]
+        position: [1300, 300]
       },
       {
         parameters: {
@@ -170,9 +185,9 @@ async function createWorkflow() {
         name: "3. AI 1차 검수",
         type: "@n8n/n8n-nodes-langchain.chainLlm",
         typeVersion: 1,
-        position: [1300, 300],
+        position: [1500, 300],
         retryOnFail: true,
-        maxTries: 10,
+        maxTries: 3,
         waitBetweenTries: 35000
       },
       {
@@ -184,9 +199,9 @@ async function createWorkflow() {
         name: "Gemini Chat Model - QA",
         type: "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
         typeVersion: 1,
-        position: [1300, 450],
+        position: [1500, 450],
         retryOnFail: true,
-        maxTries: 10,
+        maxTries: 3,
         waitBetweenTries: 35000,
         credentials: {
           googlePalmApi: {
@@ -203,7 +218,7 @@ async function createWorkflow() {
         name: "4. AI 검수 결과 파싱",
         type: "n8n-nodes-base.code",
         typeVersion: 2,
-        position: [1500, 300]
+        position: [1700, 300]
       },
       {
         parameters: {
@@ -234,7 +249,7 @@ async function createWorkflow() {
         name: "5. 검수 통과 여부 확인",
         type: "n8n-nodes-base.if",
         typeVersion: 2.2,
-        position: [1750, 300]
+        position: [1900, 300]
       },
       {
         parameters: {
@@ -265,7 +280,7 @@ async function createWorkflow() {
         name: "Is Retry (Pass)?",
         type: "n8n-nodes-base.if",
         typeVersion: 2.2,
-        position: [1950, 200]
+        position: [2100, 200]
       },
       {
         parameters: {
@@ -296,7 +311,7 @@ async function createWorkflow() {
         name: "Is Retry (Fail)?",
         type: "n8n-nodes-base.if",
         typeVersion: 2.2,
-        position: [1950, 400]
+        position: [2100, 400]
       },
       {
         parameters: {
@@ -330,7 +345,7 @@ async function createWorkflow() {
         name: "6. 구글 시트 저장",
         type: "n8n-nodes-base.googleSheets",
         typeVersion: 4,
-        position: [2150, 150],
+        position: [2300, 150],
         credentials: {
           googleSheetsOAuth2Api: {
             id: "kYYPtfXi2R21Raso",
@@ -351,7 +366,7 @@ async function createWorkflow() {
         name: "7. 텔레그램 1차 승인 요청",
         type: "n8n-nodes-base.telegram",
         typeVersion: 1.2,
-        position: [2350, 150],
+        position: [2500, 150],
         credentials: {
           telegramApi: {
             id: "UpgU76dwpjon6Ztm",
@@ -391,7 +406,7 @@ async function createWorkflow() {
         name: "6-1. 구글 시트 저장 (실패 건)",
         type: "n8n-nodes-base.googleSheets",
         typeVersion: 4,
-        position: [2150, 480],
+        position: [2300, 480],
         credentials: {
           googleSheetsOAuth2Api: {
             id: "kYYPtfXi2R21Raso",
@@ -412,7 +427,7 @@ async function createWorkflow() {
         name: "Telegram Failure Notification",
         type: "n8n-nodes-base.telegram",
         typeVersion: 1.2,
-        position: [2350, 480],
+        position: [2500, 480],
         credentials: {
           telegramApi: {
             id: "UpgU76dwpjon6Ztm",
@@ -648,7 +663,7 @@ async function createWorkflow() {
         name: "Google Sheets - Retry Save",
         type: "n8n-nodes-base.googleSheets",
         typeVersion: 4,
-        position: [2150, 300],
+        position: [2300, 300],
         credentials: {
           googleSheetsOAuth2Api: {
             id: "kYYPtfXi2R21Raso",
@@ -669,7 +684,7 @@ async function createWorkflow() {
         name: "Telegram - Retry Notify",
         type: "n8n-nodes-base.telegram",
         typeVersion: 1.2,
-        position: [2350, 300],
+        position: [2500, 300],
         credentials: {
           telegramApi: {
             id: "UpgU76dwpjon6Ztm",
@@ -711,6 +726,17 @@ async function createWorkflow() {
         ]
       },
       "0. 기존 주제 목록 조회": {
+        main: [
+          [
+            {
+              node: "0-1. 기존 주제 병합",
+              type: "main",
+              index: 0
+            }
+          ]
+        ]
+      },
+      "0-1. 기존 주제 병합": {
         main: [
           [
             {
