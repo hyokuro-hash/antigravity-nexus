@@ -665,7 +665,7 @@ return {
         parameters: {
           resource: "callback",
           operation: "answerQuery",
-          callbackQueryId: "={{ $('Parse Callback').first().json.callback_query_id }}",
+          queryId: "={{ $('Parse Callback').first().json.callback_query_id }}",
           options: {}
         },
         id: "telegram-answer-callback",
