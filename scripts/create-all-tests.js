@@ -361,30 +361,34 @@ return {
           inlineKeyboard: {
             rows: [
               {
-                buttons: [
-                  {
-                    text: "👍 1차 승인",
-                    additionalFields: {
-                      callback_data: "={{ '=approve_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }}"
+                buttons: {
+                  button: [
+                    {
+                      text: "👍 1차 승인",
+                      additionalFields: {
+                        callback_data: "={{ '=approve_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }}"
+                      }
+                    },
+                    {
+                      text: "👎 1차 거절",
+                      additionalFields: {
+                        callback_data: "={{ '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }}"
+                      }
                     }
-                  },
-                  {
-                    text: "👎 1차 거절",
-                    additionalFields: {
-                      callback_data: "={{ '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }}"
-                    }
-                  }
-                ]
+                  ]
+                }
               },
               {
-                buttons: [
-                  {
-                    text: "🔄 피드백 반영 재시도",
-                    additionalFields: {
-                      callback_data: "={{ '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }}"
+                buttons: {
+                  button: [
+                    {
+                      text: "🔄 피드백 반영 재시도",
+                      additionalFields: {
+                        callback_data: "={{ '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }}"
+                      }
                     }
-                  }
-                ]
+                  ]
+                }
               }
             ]
           },
@@ -453,20 +457,22 @@ return {
           inlineKeyboard: {
             rows: [
               {
-                buttons: [
-                  {
-                    text: "🔄 피드백 반영 재시도",
-                    additionalFields: {
-                      callback_data: "={{ '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }}"
+                buttons: {
+                  button: [
+                    {
+                      text: "🔄 피드백 반영 재시도",
+                      additionalFields: {
+                        callback_data: "={{ '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }}"
+                      }
+                    },
+                    {
+                      text: "👎 최종 반려",
+                      additionalFields: {
+                        callback_data: "={{ '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }}"
+                      }
                     }
-                  },
-                  {
-                    text: "👎 최종 반려",
-                    additionalFields: {
-                      callback_data: "={{ '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }}"
-                    }
-                  }
-                ]
+                  ]
+                }
               }
             ]
           },
@@ -730,7 +736,7 @@ return {
           chatId: telegramChatId,
           text: "= {{ $('4. AI 검수 결과 파싱').first().json.pass ? '📢 <b>[재재작성 완료 - 1차 검수 통과]</b>' : '⚠️ <b>[재재작성 완료 - AI 검수 최종 실패]</b>' }}\n\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n⭐ <b>AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n{{ $('4. AI 검수 결과 파싱').first().json.pass ? '' : '❌ <b>최종 반려 피드백</b>:\\n' + $('4. AI 검수 결과 파싱').first().json.feedback.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n\n{{ $('4. AI 검수 결과 파싱').first().json.pass ? '📝 <b>기획 및 가대본 요약</b>:\\n' + $('4. AI 검수 결과 파싱').first().json.script_summary.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') + '\\n\\n위 가대본으로 다음 단계를 진행할까요?' : '피드백을 반영하여 다시 대본을 작성하시겠습니까?' }}",
           replyMarkup: "inlineKeyboard",
-          inlineKeyboard: "={{ { rows: $('4. AI 검수 결과 파싱').first().json.pass ? [ { buttons: [ { text: '👍 1차 승인', additionalFields: { callback_data: '=approve_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } }, { text: '👎 1차 거절', additionalFields: { callback_data: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } } ] }, { buttons: [ { text: '🔄 피드백 반영 재시도', additionalFields: { callback_data: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } } ] } ] : [ { buttons: [ { text: '🔄 피드백 반영 재시도', additionalFields: { callback_data: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } }, { text: '👎 최종 반려', additionalFields: { callback_data: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } } ] } ] } }}",
+          inlineKeyboard: "={{ { rows: $('4. AI 검수 결과 파싱').first().json.pass ? [ { buttons: { button: [ { text: '👍 1차 승인', additionalFields: { callback_data: '=approve_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } }, { text: '👎 1차 거절', additionalFields: { callback_data: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } } ] } }, { buttons: { button: [ { text: '🔄 피드백 반영 재시도', additionalFields: { callback_data: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } } ] } } ] : [ { buttons: { button: [ { text: '🔄 피드백 반영 재시도', additionalFields: { callback_data: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } }, { text: '👎 최종 반려', additionalFields: { callback_data: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } } ] } } ] } }}",
           additionalFields: {
             appendAttribution: false,
             parseMode: "HTML"
