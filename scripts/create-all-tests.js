@@ -6,9 +6,10 @@
 const host = process.env.N8N_HOST;
 const apiKey = process.env.N8N_API_KEY;
 const telegramChatId = process.env.TELEGRAM_CHAT_ID;
+const telegramToken = process.env.TELEGRAM_BOT_TOKEN;
 
-if (!host || !apiKey || !telegramChatId) {
-  console.error("❌ Error: Missing required environment variables N8N_HOST, N8N_API_KEY, or TELEGRAM_CHAT_ID.");
+if (!host || !apiKey || !telegramChatId || !telegramToken) {
+  console.error("❌ Error: Missing required environment variables N8N_HOST, N8N_API_KEY, TELEGRAM_CHAT_ID, or TELEGRAM_BOT_TOKEN.");
   process.exit(1);
 }
 
@@ -212,7 +213,7 @@ return {
       },
       {
         parameters: {
-          jsCode: "let text = $input.item.json.text || \"\";\nlet pass = false;\nlet score = 5;\nlet feedback = \"JSON 파싱 실패\";\n\n// Clean any markdown code blocks\nlet cleanedText = text.replace(/```json|```/gi, \"\").trim();\nconst jsonMatch = cleanedText.match(/({[\\s\\S]*?})/);\nif (jsonMatch) {\n  const rawJson = jsonMatch[1];\n  try {\n    const parsed = JSON.parse(rawJson);\n    pass = parsed.pass === true;\n    \n    let scoreObj = parsed.score;\n    if (typeof scoreObj === 'object' && scoreObj !== null) {\n      let sum = 0;\n      let count = 0;\n      for (let k in scoreObj) {\n        sum += parseInt(scoreObj[k]) || 0;\n        count++;\n      }\n      score = count > 0 ? Math.round(sum / count) : 5;\n    } else {\n      score = parseInt(scoreObj) || 5;\n    }\n    feedback = parsed.feedback || \"\";\n  } catch (e) {\n    // Fallback parsing via Regex if JSON contains unescaped quotes\n    try {\n      const passM = rawJson.match(/\"pass\"\\s*:\\s*(true|false)/i);\n      pass = passM ? passM[1].toLowerCase() === 'true' : false;\n      \n      let scoreObj = null;\n      const scoreM = rawJson.match(/\"score\"\\s*:\\s*({[\\s\\S]*?})/);\n      if (scoreM) {\n        try {\n          scoreObj = JSON.parse(scoreM[1]);\n        } catch(err) {\n          const trendM = scoreM[1].match(/\"trend\"\\s*:\\s*(\\d+)/);\n          const hookM = scoreM[1].match(/\"hook\"\\s*:\\s*(\\d+)/);\n          const structM = scoreM[1].match(/\"structure\"\\s*:\\s*(\\d+)/);\n          const factM = scoreM[1].match(/\"fact_accuracy\"\\s*:\\s*(\\d+)/);\n          scoreObj = {\n            trend: trendM ? parseInt(trendM[1]) : 7,\n            hook: hookM ? parseInt(hookM[1]) : 7,\n            structure: structM ? parseInt(structM[1]) : 7,\n            fact_accuracy: factM ? parseInt(factM[1]) : 7\n          };\n        }\n      } else {\n        const scoreNumM = rawJson.match(/\"score\"\\s*:\\s*(\\d+)/);\n        if (scoreNumM) score = parseInt(scoreNumM[1]);\n      }\n      \n      if (scoreObj && typeof scoreObj === 'object') {\n        let sum = 0;\n        let count = 0;\n        for (let k in scoreObj) {\n          sum += parseInt(scoreObj[k]) || 0;\n          count++;\n        }\n        score = count > 0 ? Math.round(sum / count) : 5;\n      }\n      \n      const feedbackM = rawJson.match(/\"feedback\"\\s*:\\s*\"([\\s\\S]*?)\"\\s*\\}\\s*$/) || rawJson.match(/\"feedback\"\\s*:\\s*\"([\\s\\S]*?)\"/);\n      feedback = feedbackM ? feedbackM[1] : \"피드백 파싱 실패 (정규식)\";\n    } catch (fallbackErr) {\n      feedback = \"JSON 파싱 에러: \" + e.message + \" (생성본: \" + text.substring(0, 100) + \"...)\";\n    }\n  }\n} else {\n  feedback = \"JSON 형식의 응답을 찾을 수 없습니다.\";\n}\n\nlet scriptDraft = \"\";\ntry {\n  // In n8n, the input to this parser is from qa-node, which runs after 2-1\n  scriptDraft = $('2-1. 콘텐츠 기획 및 가대본 제작').first().json.text || \"\";\n} catch (e) {\n  scriptDraft = \"\";\n}\n\nlet summary = scriptDraft;\nsummary = summary.replace(/자동 선정 주제:.*\\n?/, \"\").trim();\nif (summary.length > 800) {\n  summary = summary.substring(0, 800) + \"\\n... (이하 생략)\";\n}\n\n// Get row_id from previous node or generate new one if not retry run\nlet row_id = \"\";\ntry {\n  row_id = $('Prepare QA Input').first().json.row_id || \"\";\n} catch(err) {}\nif (!row_id) {\n  row_id = \"CNT_\" + new Date().toISOString().replace(/[-:T.Z]/g, \"\") + \"_\" + Math.floor(Math.random() * 1000);\n}\n\nlet topic = \"\";\ntry {\n  topic = $('Format Retry Input').first().json.topic || \"\";\n} catch(err) {}\nif (!topic) {\n  try {\n    let rText = $('2. 자동 주제 선정 & 자료 조사').first().json.text || \"\";\n    const topicMatch = rText.match(/자동 선정 주제:\\s*(.*)/) || rText.match(/주제:\\s*(.*)/) || rText.match(/###\\s*(.*)/);\n    topic = topicMatch ? topicMatch[1].trim() : \"2026년 AI 트렌드\";\n  } catch(err) {\n    topic = \"2026년 AI 트렌드\";\n  }\n}\n\n// Detect if this execution has Format Retry Input node in its path safely\nlet is_retry = false;\ntry {\n  if ($('Format Retry Input').first().json !== undefined) {\n    is_retry = true;\n  }\n} catch (e) {\n  is_retry = false;\n}\n\nreturn {\n  pass,\n  score,\n  feedback,\n  topic,\n  script_draft: scriptDraft,\n  script_summary: summary,\n  row_id,\n  is_retry\n};"
+          jsCode: "let text = $input.item.json.text || \"\";\nlet pass = false;\nlet score = 5;\nlet feedback = \"JSON 파싱 실패\";\n\n// Clean any markdown code blocks\nlet cleanedText = text.replace(/```json|```/gi, \"\").trim();\nconst jsonMatch = cleanedText.match(/({[\\s\\S]*?})/);\nif (jsonMatch) {\n  const rawJson = jsonMatch[1];\n  try {\n    const parsed = JSON.parse(rawJson);\n    pass = parsed.pass === true;\n    \n    let scoreObj = parsed.score;\n    if (typeof scoreObj === 'object' && scoreObj !== null) {\n      let sum = 0;\n      let count = 0;\n      for (let k in scoreObj) {\n        sum += parseInt(scoreObj[k]) || 0;\n        count++;\n      }\n      score = count > 0 ? Math.round(sum / count) : 5;\n    } else {\n      score = parseInt(scoreObj) || 5;\n    }\n    feedback = parsed.feedback || \"\";\n  } catch (e) {\n    // Fallback parsing via Regex if JSON contains unescaped quotes\n    try {\n      const passM = rawJson.match(/\"pass\"\\s*:\\s*(true|false)/i);\n      pass = passM ? passM[1].toLowerCase() === 'true' : false;\n      \n      let scoreObj = null;\n      const scoreM = rawJson.match(/\"score\"\\s*:\\s*({[\\s\\S]*?})/);\n      if (scoreM) {\n        try {\n          scoreObj = JSON.parse(scoreM[1]);\n        } catch(err) {\n          const trendM = scoreM[1].match(/\"trend\"\\s*:\\s*(\\d+)/);\n          const hookM = scoreM[1].match(/\"hook\"\\s*:\\s*(\\d+)/);\n          const structM = scoreM[1].match(/\"structure\"\\s*:\\s*(\\d+)/);\n          const factM = scoreM[1].match(/\"fact_accuracy\"\\s*:\\s*(\\d+)/);\n          scoreObj = {\n            trend: trendM ? parseInt(trendM[1]) : 7,\n            hook: hookM ? parseInt(hookM[1]) : 7,\n            structure: structM ? parseInt(structM[1]) : 7,\n            fact_accuracy: factM ? parseInt(factM[1]) : 7\n          };\n        }\n      } else {\n        const scoreNumM = rawJson.match(/\"score\"\\s*:\\s*(\\d+)/);\n        if (scoreNumM) score = parseInt(scoreNumM[1]);\n      }\n      \n      if (scoreObj && typeof scoreObj === 'object') {\n        let sum = 0;\n        let count = 0;\n        for (let k in scoreObj) {\n          sum += parseInt(scoreObj[k]) || 0;\n          count++;\n        }\n        score = count > 0 ? Math.round(sum / count) : 5;\n      }\n      \n      const feedbackM = rawJson.match(/\"feedback\"\\s*:\\s*\"([\\s\\S]*?)\"\\s*\\}\\s*$/) || rawJson.match(/\"feedback\"\\s*:\\s*\"([\\s\\S]*?)\"/);\n      feedback = feedbackM ? feedbackM[1] : \"피드백 파싱 실패 (정규식)\";\n    } catch (fallbackErr) {\n      feedback = \"JSON 파싱 에러: \" + e.message + \" (생성본: \" + text.substring(0, 100) + \"...)\";\n    }\n  }\n} else {\n  feedback = \"JSON 형식의 응답을 찾을 수 없습니다.\";\n}\n\nlet scriptDraft = \"\";\ntry {\n  // In n8n, the input to this parser is from qa-node, which runs after 2-1\n  scriptDraft = $('2-1. 콘텐츠 기획 및 가대본 제작').first().json.text || \"\";\n} catch (e) {\n  scriptDraft = \"\";\n}\n\nlet summary = scriptDraft;\nsummary = summary.replace(/자동 선정 주제:.*\\n?/, \"\").trim();\nlet cleanLines = summary.split('\\n')\n  .map(line => line.trim())\n  .filter(line => line.length > 0 && !line.startsWith('---') && !line.startsWith('#') && !line.startsWith('|') && !line.startsWith('>') && !line.startsWith('::'));\nlet summaryShort = cleanLines.slice(0, 3).join(' ');\nif (summaryShort.length > 250) {\n  summaryShort = summaryShort.substring(0, 250) + \"...\";\n}\nif (!summaryShort) {\n  summaryShort = \"대본이 생성되었습니다. 구글 시트 링크를 통해 전체 가대본 기획안을 확인해 주세요.\";\n}\n\n// Get row_id from previous node or generate new one if not retry run\nlet row_id = \"\";\ntry {\n  row_id = $('Prepare QA Input').first().json.row_id || \"\";\n} catch(err) {}\nif (!row_id) {\n  row_id = \"CNT_\" + new Date().toISOString().replace(/[-:T.Z]/g, \"\") + \"_\" + Math.floor(Math.random() * 1000);\n}\n\nlet topic = \"\";\ntry {\n  topic = $('Format Retry Input').first().json.topic || \"\";\n} catch(err) {}\nif (!topic) {\n  try {\n    let rText = $('2. 자동 주제 선정 & 자료 조사').first().json.text || \"\";\n    const topicMatch = rText.match(/자동 선정 주제:\\s*(.*)/) || rText.match(/주제:\\s*(.*)/) || rText.match(/###\\s*(.*)/);\n    topic = topicMatch ? topicMatch[1].trim() : \"2026년 AI 트렌드\";\n  } catch(err) {\n    topic = \"2026년 AI 트렌드\";\n  }\n}\n\n// Detect if this execution has Format Retry Input node in its path safely\nlet is_retry = false;\ntry {\n  if ($('Format Retry Input').first().json !== undefined) {\n    is_retry = true;\n  }\n} catch (e) {\n  is_retry = false;\n}\n\nreturn {\n  pass,\n  score,\n  feedback,\n  topic,\n  script_draft: scriptDraft,\n  script_summary: summaryShort,\n  row_id,\n  is_retry\n};"
         },
         id: "json-parser-node",
         name: "4. AI 검수 결과 파싱",
@@ -355,59 +356,18 @@ return {
       },
       {
         parameters: {
-          chatId: telegramChatId,
-          text: "=📢 <b>[1차 콘텐츠 가대본 기획 완료]</b>\n\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n⭐ <b>AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n\n📝 <b>기획 및 가대본 요약</b>:\n{{ $('4. AI 검수 결과 파싱').first().json.script_summary.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n\n위 가대본으로 다음 단계(최종 대본 및 영상 리소스 제작)를 진행할까요?",
-          replyMarkup: "inlineKeyboard",
-          inlineKeyboard: {
-            rows: [
-              {
-                buttons: {
-                  button: [
-                    {
-                      text: "👍 1차 승인",
-                      additionalFields: {
-                        callback_data: "={{ '=approve_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }}"
-                      }
-                    },
-                    {
-                      text: "👎 1차 거절",
-                      additionalFields: {
-                        callback_data: "={{ '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }}"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                buttons: {
-                  button: [
-                    {
-                      text: "🔄 피드백 반영 재시도",
-                      additionalFields: {
-                        callback_data: "={{ '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }}"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          additionalFields: {
-            appendAttribution: false,
-            parseMode: "HTML"
-          }
+          method: "POST",
+          url: `https://api.telegram.org/bot${telegramToken}/sendMessage`,
+          sendBody: true,
+          specifyBody: "json",
+          jsonBody: `={\n  "chat_id": "${telegramChatId}",\n  "text": "📢 <b>1차 콘텐츠 가대본 기획 완료</b>\\n\\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\\n⭐ <b>AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\\n\\n📝 <b>기획 요약</b>:\\n{{ $('4. AI 검수 결과 파싱').first().json.script_summary.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\\n\\n📁 <a href=\\"https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0\\"><b>구글 시트에서 전체 가대본 보기</b></a>\\n\\n위 가대본으로 다음 단계(최종 대본 및 영상 리소스 제작)를 진행할까요?",\n  "parse_mode": "HTML",\n  "reply_markup": {\n    "inline_keyboard": [\n      [\n        { "text": "👍 1차 승인", "callback_data": "=approve_1_{{ $('4. AI 검수 결과 파싱').first().json.row_id }}" },\n        { "text": "👎 1차 거절", "callback_data": "=reject_1_{{ $('4. AI 검수 결과 파싱').first().json.row_id }}" }\n      ],\n      [\n        { "text": "🔄 피드백 반영 재시도", "callback_data": "=retry_1_{{ $('4. AI 검수 결과 파싱').first().json.row_id }}" }\n      ]\n    ]\n  }\n}`,
+          options: {}
         },
         id: "telegram-approval-node",
         name: "7. 텔레그램 1차 승인 요청",
-        type: "n8n-nodes-base.telegram",
-        typeVersion: 1.2,
-        position: [2500, 150],
-        credentials: {
-          telegramApi: {
-            id: "UpgU76dwpjon6Ztm",
-            name: "Telegram Bot API"
-          }
-        }
+        type: "n8n-nodes-base.httpRequest",
+        typeVersion: 4.1,
+        position: [2500, 150]
       },
       {
         parameters: {
@@ -451,47 +411,18 @@ return {
       },
       {
         parameters: {
-          chatId: telegramChatId,
-          text: "=⚠️ <b>[가대본 기획 및 AI 검수 최종 실패]</b>\n\n🤖 AI 검수를 통과하지 못했습니다.\n\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n⭐ <b>최종 AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n❌ <b>최종 반려 피드백</b>:\n{{ $('4. AI 검수 결과 파싱').first().json.feedback.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n\n피드백을 반영하여 대본을 다시 작성하시겠습니까?",
-          replyMarkup: "inlineKeyboard",
-          inlineKeyboard: {
-            rows: [
-              {
-                buttons: {
-                  button: [
-                    {
-                      text: "🔄 피드백 반영 재시도",
-                      additionalFields: {
-                        callback_data: "={{ '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }}"
-                      }
-                    },
-                    {
-                      text: "👎 최종 반려",
-                      additionalFields: {
-                        callback_data: "={{ '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id }}"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          additionalFields: {
-            appendAttribution: false,
-            parseMode: "HTML"
-          }
+          method: "POST",
+          url: `https://api.telegram.org/bot${telegramToken}/sendMessage`,
+          sendBody: true,
+          specifyBody: "json",
+          jsonBody: `={\n  "chat_id": "${telegramChatId}",\n  "text": "⚠️ <b>가대본 기획 및 AI 검수 최종 실패</b>\\n\\n🤖 AI 검수를 통과하지 못했습니다.\\n\\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\\n⭐ <b>최종 AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\\n❌ <b>최종 반려 피드백</b>:\\n{{ $('4. AI 검수 결과 파싱').first().json.feedback.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\\n\\n📁 <a href=\\"https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0\\"><b>구글 시트에서 전체 내역 보기</b></a>\\n\\n피드백을 반영하여 대본을 다시 작성하시겠습니까?",\n  "parse_mode": "HTML",\n  "reply_markup": {\n    "inline_keyboard": [\n      [\n        { "text": "🔄 피드백 반영 재시도", "callback_data": "=retry_1_{{ $('4. AI 검수 결과 파싱').first().json.row_id }}" },\n        { "text": "👎 최종 반려", "callback_data": "=reject_1_{{ $('4. AI 검수 결과 파싱').first().json.row_id }}" }\n      ]\n    ]\n  }\n}`,
+          options: {}
         },
         id: "telegram-failure-notification",
         name: "Telegram Failure Notification",
-        type: "n8n-nodes-base.telegram",
-        typeVersion: 1.2,
-        position: [2500, 480],
-        credentials: {
-          telegramApi: {
-            id: "UpgU76dwpjon6Ztm",
-            name: "Telegram Bot API"
-          }
-        }
+        type: "n8n-nodes-base.httpRequest",
+        typeVersion: 4.1,
+        position: [2500, 480]
       },
 
       // ==========================================
@@ -597,27 +528,18 @@ return {
       },
       {
         parameters: {
-          resource: "message",
-          operation: "editMessageText",
-          chatId: telegramChatId,
-          messageId: "={{ $('Parse Callback').first().json.message_id }}",
-          text: "= {{ $('Parse Callback').first().json.action === 'approve' ? '✅ <b>[1차 승인 완료]</b>' : '❌ <b>[1차 반려 완료]</b>' }}\n\n📌 <b>주제</b>: {{ $json.Topic_Raw.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n- <b>상태</b>: {{ $('Parse Callback').first().json.action === 'approve' ? '1차 승인 완료 (2차 최종 제작 단계 대기)' : '최종 반려 및 중단 처리됨' }}",
-          additionalFields: {
-            appendAttribution: false,
-            parseMode: "HTML"
-          }
+          method: "POST",
+          url: `https://api.telegram.org/bot${telegramToken}/editMessageText`,
+          sendBody: true,
+          specifyBody: "json",
+          jsonBody: `={\n  "chat_id": "${telegramChatId}",\n  "message_id": {{ $('Parse Callback').first().json.message_id }},\n  "text": "{{ $('Parse Callback').first().json.action === 'approve' ? '✅ <b>1차 승인 완료</b>' : '❌ <b>1차 반려 완료</b>' }}\\n\\n📌 <b>주제</b>: {{ $json.Topic_Raw.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\\n- <b>상태</b>: {{ $('Parse Callback').first().json.action === 'approve' ? '1차 승인 완료 (2차 최종 제작 단계 대기)' : '최종 반려 및 중단 처리됨' }}\\n\\n📁 <a href=\\"https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0\\"><b>구글 시트에서 전체 내역 보기</b></a>",\n  "parse_mode": "HTML",\n  "reply_markup": {\n    "inline_keyboard": []\n  }\n}`,
+          options: {}
         },
         id: "telegram-clear-buttons",
         name: "Telegram - Clear Buttons",
-        type: "n8n-nodes-base.telegram",
-        typeVersion: 1.2,
-        position: [900, 720],
-        credentials: {
-          telegramApi: {
-            id: "UpgU76dwpjon6Ztm",
-            name: "Telegram Bot API"
-          }
-        }
+        type: "n8n-nodes-base.httpRequest",
+        typeVersion: 4.1,
+        position: [900, 720]
       },
       {
         parameters: {
@@ -659,27 +581,18 @@ return {
       },
       {
         parameters: {
-          resource: "message",
-          operation: "editMessageText",
-          chatId: telegramChatId,
-          messageId: "={{ $('Parse Callback').first().json.message_id }}",
-          text: "=🔄 <b>[피드백 반영 재작성 시작]</b>\n\nAI가 이전 반려 피드백을 수용하여 대본을 새로 다시 작성하고 있습니다. 잠시만 기다려주세요...\n(ID: {{ $json.ID }})",
-          additionalFields: {
-            appendAttribution: false,
-            parseMode: "HTML"
-          }
+          method: "POST",
+          url: `https://api.telegram.org/bot${telegramToken}/editMessageText`,
+          sendBody: true,
+          specifyBody: "json",
+          jsonBody: `={\n  "chat_id": "${telegramChatId}",\n  "message_id": {{ $('Parse Callback').first().json.message_id }},\n  "text": "🔄 <b>피드백 반영 재작성 시작</b>\\n\\nAI가 이전 반려 피드백을 수용하여 대본을 새로 다시 작성하고 있습니다. 잠시만 기다려주세요...\\n(ID: {{ $json.ID }})",\n  "parse_mode": "HTML"\n}`,
+          options: {}
         },
         id: "telegram-notify-retry-start",
         name: "Telegram - Notify Retry Start",
-        type: "n8n-nodes-base.telegram",
-        typeVersion: 1.2,
-        position: [1100, 850],
-        credentials: {
-          telegramApi: {
-            id: "UpgU76dwpjon6Ztm",
-            name: "Telegram Bot API"
-          }
-        }
+        type: "n8n-nodes-base.httpRequest",
+        typeVersion: 4.1,
+        position: [1100, 850]
       },
       {
         parameters: {
@@ -733,26 +646,18 @@ return {
       },
       {
         parameters: {
-          chatId: telegramChatId,
-          text: "= {{ $('4. AI 검수 결과 파싱').first().json.pass ? '📢 <b>[재재작성 완료 - 1차 검수 통과]</b>' : '⚠️ <b>[재재작성 완료 - AI 검수 최종 실패]</b>' }}\n\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n⭐ <b>AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\n{{ $('4. AI 검수 결과 파싱').first().json.pass ? '' : '❌ <b>최종 반려 피드백</b>:\\n' + $('4. AI 검수 결과 파싱').first().json.feedback.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\n\n{{ $('4. AI 검수 결과 파싱').first().json.pass ? '📝 <b>기획 및 가대본 요약</b>:\\n' + $('4. AI 검수 결과 파싱').first().json.script_summary.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') + '\\n\\n위 가대본으로 다음 단계를 진행할까요?' : '피드백을 반영하여 다시 대본을 작성하시겠습니까?' }}",
-          replyMarkup: "inlineKeyboard",
-          inlineKeyboard: "={{ { rows: $('4. AI 검수 결과 파싱').first().json.pass ? [ { buttons: { button: [ { text: '👍 1차 승인', additionalFields: { callback_data: '=approve_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } }, { text: '👎 1차 거절', additionalFields: { callback_data: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } } ] } }, { buttons: { button: [ { text: '🔄 피드백 반영 재시도', additionalFields: { callback_data: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } } ] } } ] : [ { buttons: { button: [ { text: '🔄 피드백 반영 재시도', additionalFields: { callback_data: '=retry_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } }, { text: '👎 최종 반려', additionalFields: { callback_data: '=reject_1_' + $('4. AI 검수 결과 파싱').first().json.row_id } } ] } } ] } }}",
-          additionalFields: {
-            appendAttribution: false,
-            parseMode: "HTML"
-          }
+          method: "POST",
+          url: `https://api.telegram.org/bot${telegramToken}/sendMessage`,
+          sendBody: true,
+          specifyBody: "json",
+          jsonBody: `={\n  "chat_id": "${telegramChatId}",\n  "text": "{{ $('4. AI 검수 결과 파싱').first().json.pass ? '📢 <b>재재작성 완료 - 1차 검수 통과</b>' : '⚠️ <b>재재작성 완료 - AI 검수 최종 실패</b>' }}\\n\\n📌 <b>주제</b>: {{ $('4. AI 검수 결과 파싱').first().json.topic.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\\n⭐ <b>AI 검수 점수</b>: {{ $('4. AI 검수 결과 파싱').first().json.score }}/10점\\n{{ $('4. AI 검수 결과 파싱').first().json.pass ? '' : '❌ <b>최종 반려 피드백</b>:\\n' + $('4. AI 검수 결과 파싱').first().json.feedback.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') + '\\n' }}\\n📝 <b>기획 요약</b>:\\n{{ $('4. AI 검수 결과 파싱').first().json.script_summary.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\\n\\n📁 <a href=\\"https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0\\"><b>구글 시트에서 전체 가대본 보기</b></a>\\n\\n위 가대본으로 다음 단계를 진행할까요?",\n  "parse_mode": "HTML",\n  "reply_markup": {\n    "inline_keyboard": {{ $('4. AI 검수 결과 파싱').first().json.pass ? '[ [ { "text": "👍 1차 승인", "callback_data": "=approve_1_" + $('4. AI 검수 결과 파싱').first().json.row_id }, { "text": "👎 1차 거절", "callback_data": "=reject_1_" + $('4. AI 검수 결과 파싱').first().json.row_id } ], [ { "text": "🔄 피드백 반영 재시도", "callback_data": "=retry_1_" + $('4. AI 검수 결과 파싱').first().json.row_id } ] ]' : '[ [ { "text": "🔄 피드백 반영 재시도", "callback_data": "=retry_1_" + $('4. AI 검수 결과 파싱').first().json.row_id }, { "text": "👎 최종 반려", "callback_data": "=reject_1_" + $('4. AI 검수 결과 파싱').first().json.row_id } ] ]' }}\n  }\n}`,
+          options: {}
         },
         id: "telegram-retry-notify",
         name: "Telegram - Retry Notify",
-        type: "n8n-nodes-base.telegram",
-        typeVersion: 1.2,
-        position: [2500, 300],
-        credentials: {
-          telegramApi: {
-            id: "UpgU76dwpjon6Ztm",
-            name: "Telegram Bot API"
-          }
-        }
+        type: "n8n-nodes-base.httpRequest",
+        typeVersion: 4.1,
+        position: [2500, 300]
       },
       {
         parameters: {
