@@ -677,6 +677,7 @@ return {
         type: "n8n-nodes-base.telegram",
         typeVersion: 1.2,
         position: [700, 1150],
+        onError: "continueRegularInfo",
         credentials: {
           telegramApi: {
             id: "UpgU76dwpjon6Ztm",
