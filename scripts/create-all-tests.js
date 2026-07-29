@@ -535,7 +535,7 @@ return {
           url: `https://api.telegram.org/bot${telegramToken}/editMessageText`,
           sendBody: true,
           specifyBody: "json",
-          jsonBody: `={\n  "chat_id": "${telegramChatId}",\n  "message_id": {{ $('Parse Callback').first().json.message_id }},\n  "text": "{{ $('Parse Callback').first().json.action === 'approve' ? '✅ <b>승인 완료</b>' : '❌ <b>반려 완료</b>' }}\\n\\n📌 <b>주제</b>: {{ $json.Topic_Raw.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\\n- <b>상태</b>: {{ $('Parse Callback').first().json.action === 'approve' ? '승인 완료 (2차 최종 제작 단계 대기)' : '최종 반려 및 중단 처리됨' }}\\n\\n📁 <a href=\\"https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0\\"><b>구글 시트에서 전체 내역 보기</b></a>",\n  "parse_mode": "HTML",\n  "reply_markup": {\n    "inline_keyboard": []\n  }\n}`,
+          jsonBody: `={\n  "chat_id": "${telegramChatId}",\n  "message_id": {{ $('Parse Callback').first().json.message_id }},\n  "text": "{{ $('Parse Callback').first().json.action === 'approve' ? '✅ <b>승인</b>' : '❌ <b>반려</b>' }}\\n\\n📌 <b>주제</b>: {{ $json.Topic_Raw.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;') }}\\n- <b>상태</b>: {{ $('Parse Callback').first().json.action === 'approve' ? '승인 (2차 최종 제작 단계 대기)' : '반려 및 중단 처리됨' }}\\n\\n📁 <a href=\\"https://docs.google.com/spreadsheets/d/1kW7YKfXqccDz3GEqDY_zLt5lqcnHHE6B3jum96yerX0/edit#gid=0\\"><b>구글 시트에서 전체 내역 보기</b></a>",\n  "parse_mode": "HTML",\n  "reply_markup": {\n    "inline_keyboard": []\n  }\n}`,
           options: {}
         },
         id: "telegram-clear-buttons",
